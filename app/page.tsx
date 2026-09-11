@@ -34,7 +34,7 @@ export default function Page() {
     const updateParallax = () => {
       document.querySelectorAll<HTMLElement>('.parallax-panel').forEach((panel) => {
         const distance = panel.getBoundingClientRect().top - window.innerHeight / 2
-        panel.style.setProperty('--parallax-offset', `${Math.max(-90, Math.min(90, -distance * 0.08))}px`)
+        panel.style.setProperty('--parallax-offset', `${Math.max(-42, Math.min(42, -distance * 0.035))}px`)
       })
       ticking = false
     }

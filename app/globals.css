@@ -11,16 +11,15 @@
 .modalBackdrop,.lightbox { position:fixed; inset:0; z-index:50; display:grid; place-items:center; padding:20px; background:#000c; backdrop-filter:blur(16px); }.serviceModal { position:relative; width:min(700px,100%); padding:clamp(30px,6vw,70px); background:#151515; border:1px solid #79d34a66; box-shadow:0 30px 100px #000; animation:modalIn .3s ease; }.modalClose,.lightbox>button { position:absolute; top:15px; right:20px; border:0; background:none; color:#aaa; font-size:32px; cursor:pointer; }.modalClose:hover,.lightbox>button:hover { color:var(--accent); }.modalNumber { position:absolute; top:28px; right:70px; color:#666; }.serviceModal h2 { font-size:clamp(42px,7vw,82px); line-height:.9; letter-spacing:-.07em; color:var(--accent); margin:35px 0 15px; }.modalSubtitle { color:#ddd; font-size:18px; }.modalDetail { color:#aaa; line-height:1.7; max-width:560px; }.keyPoints { display:flex; flex-wrap:wrap; gap:12px; margin:32px 0; }.keyPoints span { padding:12px 14px; border:1px solid var(--border); color:#bbb; font-size:11px; text-transform:uppercase; letter-spacing:.08em; }.keyPoints b { color:var(--accent); margin-right:6px; }.lightbox img { max-height:85vh; max-width:min(1100px,90vw); object-fit:contain; }.lightbox { z-index:60; }
 @keyframes modalIn { from { opacity:0; transform:translateY(18px) scale(.97); } to { opacity:1; transform:none; } }
 
-/* Each major panel pins briefly as the next one rises over it. */
-.stack-section { position:sticky; top:78px; min-height:calc(100vh - 78px); box-shadow:0 -24px 70px #0008; z-index:1; }
-.hero.stack-section { z-index:0; }
-#servicios.stack-section { z-index:2; }
-#nosotros.stack-section { z-index:3; }
-#galeria.stack-section { z-index:4; }
-.cta.stack-section { z-index:5; }
-#contacto.stack-section { z-index:6; }
+/* Scroll-driven parallax: each panel moves at a different depth instead of pinning. */
+.parallax-panel { position:relative; overflow:hidden; --parallax-offset:0px; }
+.parallax-panel::after { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, transparent 72%, #0004); opacity:.45; }
+.parallax-panel > * { position:relative; z-index:1; transform:translate3d(0, var(--parallax-offset), 0); transition:transform .15s linear; }
+.hero > .hero-bg { transform:translate3d(0, calc(var(--parallax-offset) * -1.8), 0) scale(1.08); height:115%; top:-7%; }
+.hero > .overlay { transform:none; z-index:0; }
+.aboutMedia img { transform:translate3d(0, calc(var(--parallax-offset) * -1.3), 0) scale(1.08); height:115%; max-width:none; width:100%; }
 
-@media(max-width:700px) { .stack-section { top:70px; min-height:calc(100svh - 70px); } .service { margin-bottom:8px; } .serviceHead { padding:14px 16px 16px; } .serviceHead h3 { margin-top:14px; font-size:18px; } .serviceHead p { font-size:11px; line-height:1.35; margin-top:5px; } .grid { padding-bottom:3vh; } }
+@media(max-width:700px) { .service { margin-bottom:4px; } .serviceHead { padding:13px 15px 14px; } .serviceHead h3 { margin-top:12px; font-size:17px; } .serviceHead p { font-size:10px; line-height:1.3; margin-top:4px; } .grid { padding-bottom:1vh; } .parallax-panel > * { transform:translate3d(0, calc(var(--parallax-offset) * .55), 0); } .hero > .hero-bg { transform:translate3d(0, calc(var(--parallax-offset) * -1.1), 0) scale(1.06); } .aboutMedia img { transform:translate3d(0, calc(var(--parallax-offset) * -.8), 0) scale(1.06); } }
 
 @media(prefers-reduced-motion:reduce) { .stack-section { position:relative; top:auto; min-height:0; } }
 @media(max-width:700px) { header { height:70px; }.head { justify-content:space-between; }.brand { width:120px; } nav { display:none; }.head>.btn { padding:11px 12px; font-size:9px; }.hero { min-height:78vh; }.section { padding:65px 0; }.grid { grid-template-columns:1fr; gap:0; margin-top:28px; padding-bottom:8vh; }.service { position:sticky; top:86px; min-height:0; margin-bottom:18px; box-shadow:0 18px 45px #0009; transform-origin:center top; }.service:nth-child(2) { top:96px; }.service:nth-child(3) { top:106px; }.service:nth-child(4) { top:116px; }.service:nth-child(5) { top:126px; }.service:nth-child(6) { top:136px; }.serviceHead { min-height:0; padding:19px 20px 21px; }.serviceHead h3 { margin-top:19px; font-size:20px; }.serviceHead p { font-size:12px; line-height:1.45; margin-top:8px; max-width:270px; }.servicePlus { font-size:22px; }.about { grid-template-columns:1fr; }.aboutMedia { min-height:330px; }.gallery { grid-template-columns:1fr 1fr; gap:6px; }.ctaIn,.contact { display:block; }.ctaIn .btn { margin-top:25px; }.contactInfo { margin-top:40px; }.foot { padding:25px 0; display:block; }.foot span { display:block; margin-top:18px; }.serviceModal { padding:35px 24px; max-height:90vh; overflow:auto; }.keyPoints { display:grid; }.modalSubtitle { font-size:16px; } }

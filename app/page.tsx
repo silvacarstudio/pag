@@ -30,19 +30,33 @@ export default function Page() {
     }, { threshold: 0.12 })
     document.querySelectorAll('.reveal, .service').forEach((element) => revealObserver.observe(element))
 
+    let ticking = false
+    const updateParallax = () => {
+      document.querySelectorAll<HTMLElement>('.parallax-panel').forEach((panel) => {
+        const distance = panel.getBoundingClientRect().top - window.innerHeight / 2
+        panel.style.setProperty('--parallax-offset', `${Math.max(-90, Math.min(90, -distance * 0.08))}px`)
+      })
+      ticking = false
+    }
+    const onScroll = () => {
+      if (!ticking) { window.requestAnimationFrame(updateParallax); ticking = true }
+    }
+    updateParallax()
+    window.addEventListener('scroll', onScroll, { passive: true })
+
     document.body.style.overflow = activeService || lightbox ? 'hidden' : ''
     const close = (event: KeyboardEvent) => event.key === 'Escape' && (setActiveService(null), setLightbox(null))
     window.addEventListener('keydown', close)
-    return () => { revealObserver.disconnect(); document.body.style.overflow = ''; window.removeEventListener('keydown', close) }
+    return () => { revealObserver.disconnect(); document.body.style.overflow = ''; window.removeEventListener('keydown', close); window.removeEventListener('scroll', onScroll) }
   }, [activeService, lightbox])
 
   return <main>
     <header><div className="wrap head"><a className="brand" href="#inicio"><img src="/images/logo.png" alt="Silva Studio" /></a><nav><a href="#servicios">Servicios</a><a href="#nosotros">Nosotros</a><a href="#galeria">Galería</a><a href="#contacto">Contacto</a></nav><a className="btn outline" href="https://wa.me/59894577748?text=Hola%20Silva%20Studio%2C%20quiero%20consultar%20por%20un%20turno.">Agendar turno</a></div></header>
-    <section id="inicio" className="hero stack-section"><div className="hero-bg" /><div className="overlay" /><div className="wrap hero-content"><p className="eyebrow">DETAILING &amp; ESTÉTICA AUTOMOTRIZ</p><h1>Tu auto.<br /><em>En otro nivel.</em></h1><p>Cuidado, precisión y pasión por cada detalle.</p><a className="btn primary" href="https://wa.me/59894577748">Agendar turno</a></div></section>
-    <section id="servicios" className="section wrap stack-section"><p className="eyebrow">NUESTROS SERVICIOS</p><h2>Más que una limpieza.</h2><p className="muted">Tratamos cada vehículo como si fuera nuestro.</p><div className="grid">{services.map((service, i) => <article className="service" key={service.title}><button className="serviceHead" onClick={() => setActiveService(service)} aria-label={`Abrir ${service.title}`}><div><small>0{i + 1}</small><h3>{service.title}</h3><p>{service.subtitle}</p></div><span className="servicePlus">+</span></button></article>)}</div></section>
-    <section id="nosotros" className="about stack-section"><div className="aboutMedia"><img src="/images/about.jpg" alt="Trabajo de detailing en Silva Studio" /></div><div className="aboutText"><p className="eyebrow">SILVA STUDIO</p><h2>El detalle hace la diferencia.</h2><p>Somos un estudio especializado en detailing y estética automotriz, enfocado en devolverle a cada vehículo una presencia impecable.</p><p>Trabajamos con dedicación, productos premium y atención minuciosa para lograr resultados que se notan.</p></div></section>
-    <section id="galeria" className="section wrap stack-section"><p className="eyebrow">TRABAJOS</p><h2>Resultados que hablan solos.</h2><div className="gallery">{gallery.map((image, i) => <button className="pic" key={image} onClick={() => setLightbox(image)}><img src={image} alt={`Trabajo realizado ${i + 1}`} /></button>)}</div></section>
-    <section className="cta stack-section"><div className="wrap ctaIn"><div><p className="eyebrow">¿LISTO PARA CAMBIAR EL LOOK DE TU AUTO?</p><h2>Dejalo en nuestras manos.</h2></div><a className="btn primary" href="https://wa.me/59894577748">Agendar ahora</a></div></section>
+    <section id="inicio" className="hero parallax-panel"><div className="hero-bg" /><div className="overlay" /><div className="wrap hero-content"><p className="eyebrow">DETAILING &amp; ESTÉTICA AUTOMOTRIZ</p><h1>Tu auto.<br /><em>En otro nivel.</em></h1><p>Cuidado, precisión y pasión por cada detalle.</p><a className="btn primary" href="https://wa.me/59894577748">Agendar turno</a></div></section>
+    <section id="servicios" className="section wrap parallax-panel"><p className="eyebrow">NUESTROS SERVICIOS</p><h2>Más que una limpieza.</h2><p className="muted">Tratamos cada vehículo como si fuera nuestro.</p><div className="grid">{services.map((service, i) => <article className="service" key={service.title}><button className="serviceHead" onClick={() => setActiveService(service)} aria-label={`Abrir ${service.title}`}><div><small>0{i + 1}</small><h3>{service.title}</h3><p>{service.subtitle}</p></div><span className="servicePlus">+</span></button></article>)}</div></section>
+    <section id="nosotros" className="about parallax-panel"><div className="aboutMedia"><img src="/images/about.jpg" alt="Trabajo de detailing en Silva Studio" /></div><div className="aboutText"><p className="eyebrow">SILVA STUDIO</p><h2>El detalle hace la diferencia.</h2><p>Somos un estudio especializado en detailing y estética automotriz, enfocado en devolverle a cada vehículo una presencia impecable.</p><p>Trabajamos con dedicación, productos premium y atención minuciosa para lograr resultados que se notan.</p></div></section>
+    <section id="galeria" className="section wrap parallax-panel"><p className="eyebrow">TRABAJOS</p><h2>Resultados que hablan solos.</h2><div className="gallery">{gallery.map((image, i) => <button className="pic" key={image} onClick={() => setLightbox(image)}><img src={image} alt={`Trabajo realizado ${i + 1}`} /></button>)}</div></section>
+    <section className="cta parallax-panel"><div className="wrap ctaIn"><div><p className="eyebrow">¿LISTO PARA CAMBIAR EL LOOK DE TU AUTO?</p><h2>Dejalo en nuestras manos.</h2></div><a className="btn primary" href="https://wa.me/59894577748">Agendar ahora</a></div></section>
     <section id="contacto" className="section wrap contact stack-section"><div><p className="eyebrow">CONTACTO</p><h2>Estética y cuidado a tu medida.</h2></div><div className="contactInfo"><a href="https://wa.me/59894577748">WhatsApp</a><a href="https://www.instagram.com/silva_car_studio/">Instagram</a><span>Luis Cluzeau Mortet 4763</span><span>Lunes a domingos</span></div></section>
     <footer><div className="wrap foot"><img src="/images/logo.png" alt="Silva Studio" /><span>Detailing &amp; estética automotriz premium.</span></div></footer>
     {activeService && <div className="modalBackdrop" onClick={() => setActiveService(null)}><section className="serviceModal" role="dialog" aria-modal="true" aria-labelledby="dialog-title" onClick={e => e.stopPropagation()}><button className="modalClose" onClick={() => setActiveService(null)} aria-label="Cerrar">×</button><p className="eyebrow">SERVICIO DESTACADO</p><small className="modalNumber">/ 0{services.indexOf(activeService) + 1}</small><h2 id="dialog-title">{activeService.title}</h2><p className="modalSubtitle">{activeService.subtitle}</p><p className="modalDetail">{activeService.detail}</p><div className="keyPoints"><span><b>+</b> Atención artesanal</span><span><b>+</b> Productos premium</span><span><b>+</b> Resultado visible</span></div><a className="btn primary" href="https://wa.me/59894577748">Agendar este servicio ↗</a></section></div>}

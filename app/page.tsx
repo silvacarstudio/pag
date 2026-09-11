@@ -20,10 +20,20 @@ export default function Page() {
   const [lightbox, setLightbox] = useState<string | null>(null)
 
   useEffect(() => {
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible')
+          revealObserver.unobserve(entry.target)
+        }
+      })
+    }, { threshold: 0.12 })
+    document.querySelectorAll('.reveal, .service').forEach((element) => revealObserver.observe(element))
+
     document.body.style.overflow = activeService || lightbox ? 'hidden' : ''
     const close = (event: KeyboardEvent) => event.key === 'Escape' && (setActiveService(null), setLightbox(null))
     window.addEventListener('keydown', close)
-    return () => { document.body.style.overflow = ''; window.removeEventListener('keydown', close) }
+    return () => { revealObserver.disconnect(); document.body.style.overflow = ''; window.removeEventListener('keydown', close) }
   }, [activeService, lightbox])
 
   return <main>
